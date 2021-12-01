@@ -10,7 +10,7 @@ var schema = buildSchema(`
         incidents(keywords: String): [incident]
     },
     type Mutation {
-      updateincidentkeywords(id: Int!, keywords: String!): incident
+      updateIncident(id: Int!, incid: incidentInput): incident
     },
     type incident {
         id: Int
@@ -19,7 +19,15 @@ var schema = buildSchema(`
         description: String
         keywords: String
         link: String
-    }
+    },
+    input incidentInput {
+      id: Int
+      subject: String
+      owner: String
+      description: String
+      keywords: String
+      link: String
+  }
 `);
 
 
@@ -38,19 +46,21 @@ var getincidents = function (args) {
     return incidentsData;
   }
 };
-var updateincidentkeywords = function ({ id, keywords }) {
-  incidentsData.map((incident) => {
+var updateIncident = function ({ id, incid }) {
+  inicdentsData =  incidentsData.map((incident) => {
     if (incident.id === id) {
-      incident.keywords = keywords;
+      return {...incident, ...incid};
+    } else {
       return incident;
     }
-  });
-  return incidentsData.filter((incident) => incident.id === id)[0];
+  })
+  const resp = inicdentsData.filter((incident) => incident.id === id)[0];
+  return resp;
 };
 var root = {
   incident: getincident,
   incidents: getincidents,
-  updateincidentkeywords: updateincidentkeywords,
+  updateIncident: updateIncident,
 };
 // Create an express server and a GraphQL endpoint
 var app = express();
