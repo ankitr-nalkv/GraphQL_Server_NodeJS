@@ -1,84 +1,87 @@
 var express = require('express');
 var express_graphql = require('express-graphql').graphqlHTTP;
 var { buildSchema } = require('graphql');
+var cors = require('cors')
+
 // GraphQL schema
 var schema = buildSchema(`
     type Query {
-        course(id: Int!): Course
-        courses(topic: String): [Course]
+        incident(id: Int!): incident
+        incidents(keywords: String): [incident]
     },
     type Mutation {
-      updateCourseTopic(id: Int!, topic: String!): Course
+      updateincidentkeywords(id: Int!, keywords: String!): incident
     },
-    type Course {
+    type incident {
         id: Int
-        title: String
-        author: String
+        subject: String
+        owner: String
         description: String
-        topic: String
-        url: String
+        keywords: String
+        link: String
     }
 `);
 
-var coursesData = [
+var incidentsData = [
   {
     id: 1,
-    title: 'The Complete Node.js Developer Course',
-    author: 'Andrew Mead, Rob Percival',
+    subject: 'The Complete Node.js Developer incident',
+    owner: 'Andrew Mead, Rob Percival',
     description:
       'Learn Node.js by building real-world applications with Node, Express, MongoDB, Mocha, and more!',
-    topic: 'Node.js',
-    url: 'https://codingthesmartway.com/courses/nodejs/',
+    keywords: 'Node.js',
+    link: 'https://codingthesmartway.com/incidents/nodejs/',
   },
   {
     id: 2,
-    title: 'Node.js, Express & MongoDB Dev to Deployment',
-    author: 'Brad Traversy',
+    subject: 'Node.js, Express & MongoDB Dev to Deployment',
+    owner: 'Brad Traversy',
     description:
       'Learn by example building & deploying real-world Node.js applications from absolute scratch',
-    topic: 'Node.js',
-    url: 'https://codingthesmartway.com/courses/nodejs-express-mongodb/',
+    keywords: 'Node.js',
+    link: 'https://codingthesmartway.com/incidents/nodejs-express-mongodb/',
   },
   {
     id: 3,
-    title: 'JavaScript: Understanding The Weird Parts',
-    author: 'Anthony Alicea',
+    subject: 'JavaScript: Understanding The Weird Parts',
+    owner: 'Anthony Alicea',
     description:
-      'An advanced JavaScript course for everyone! Scope, closures, prototypes, this, build your own framework, and more.',
-    topic: 'JavaScript',
-    url: 'https://codingthesmartway.com/courses/understand-javascript/',
+      'An advanced JavaScript incident for everyone! Scope, closures, prototypes, this, build your own framework, and more.',
+    keywords: 'JavaScript',
+    link: 'https://codingthesmartway.com/incidents/understand-javascript/',
   },
 ];
-var getCourse = function (args) {
+var getincident = function (args) {
   var id = args.id;
-  return coursesData.filter((course) => {
-    return course.id == id;
+  return incidentsData.filter((incident) => {
+    return incident.id == id;
   })[0];
 };
-var getCourses = function (args) {
-  if (args.topic) {
-    var topic = args.topic;
-    return coursesData.filter((course) => course.topic === topic);
+var getincidents = function (args) {
+  if (args.keywords) {
+    var keywords = args.keywords;
+    return incidentsData.filter((incident) => incident.keywords === keywords);
   } else {
-    return coursesData;
+    return incidentsData;
   }
 };
-var updateCourseTopic = function ({ id, topic }) {
-  coursesData.map((course) => {
-    if (course.id === id) {
-      course.topic = topic;
-      return course;
+var updateincidentkeywords = function ({ id, keywords }) {
+  incidentsData.map((incident) => {
+    if (incident.id === id) {
+      incident.keywords = keywords;
+      return incident;
     }
   });
-  return coursesData.filter((course) => course.id === id)[0];
+  return incidentsData.filter((incident) => incident.id === id)[0];
 };
 var root = {
-  course: getCourse,
-  courses: getCourses,
-  updateCourseTopic: updateCourseTopic,
+  incident: getincident,
+  incidents: getincidents,
+  updateincidentkeywords: updateincidentkeywords,
 };
 // Create an express server and a GraphQL endpoint
 var app = express();
+app.use(cors());
 app.use(
   '/graphql',
   express_graphql({
