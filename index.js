@@ -2,7 +2,7 @@ var express = require('express');
 var express_graphql = require('express-graphql').graphqlHTTP;
 var { buildSchema } = require('graphql');
 var cors = require('cors')
-
+var { incidentsData } = require('./data');
 // GraphQL schema
 var schema = buildSchema(`
     type Query {
@@ -22,35 +22,7 @@ var schema = buildSchema(`
     }
 `);
 
-var incidentsData = [
-  {
-    id: 1,
-    subject: 'The Complete Node.js Developer incident',
-    owner: 'Andrew Mead, Rob Percival',
-    description:
-      'Learn Node.js by building real-world applications with Node, Express, MongoDB, Mocha, and more!',
-    keywords: 'Node.js',
-    link: 'https://codingthesmartway.com/incidents/nodejs/',
-  },
-  {
-    id: 2,
-    subject: 'Node.js, Express & MongoDB Dev to Deployment',
-    owner: 'Brad Traversy',
-    description:
-      'Learn by example building & deploying real-world Node.js applications from absolute scratch',
-    keywords: 'Node.js',
-    link: 'https://codingthesmartway.com/incidents/nodejs-express-mongodb/',
-  },
-  {
-    id: 3,
-    subject: 'JavaScript: Understanding The Weird Parts',
-    owner: 'Anthony Alicea',
-    description:
-      'An advanced JavaScript incident for everyone! Scope, closures, prototypes, this, build your own framework, and more.',
-    keywords: 'JavaScript',
-    link: 'https://codingthesmartway.com/incidents/understand-javascript/',
-  },
-];
+
 var getincident = function (args) {
   var id = args.id;
   return incidentsData.filter((incident) => {
@@ -58,6 +30,7 @@ var getincident = function (args) {
   })[0];
 };
 var getincidents = function (args) {
+  debugger;
   if (args.keywords) {
     var keywords = args.keywords;
     return incidentsData.filter((incident) => incident.keywords === keywords);
